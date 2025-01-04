@@ -14,6 +14,12 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideStoreDevtools } from '@ngrx/store-devtools'
 import { provideRouterStore, routerReducer } from '@ngrx/router-store'
+import { uploadFeatureKey, uploadReducer } from './shared/store/upload/reducer'
+import { feedFeatureKey, feedReducer } from './shared/store/feed/reducer'
+import { provideEffects } from '@ngrx/effects'
+
+import * as feedEffects from './shared/store/feed/effect'
+import * as uploadEffects from './shared/store/upload/effect'
 
 registerLocaleData(en)
 
@@ -25,6 +31,9 @@ export const appConfig: ApplicationConfig = {
       router: routerReducer,
     }),
     provideRouterStore(),
+    provideState(uploadFeatureKey, uploadReducer),
+    provideState(feedFeatureKey, feedReducer),
+    provideEffects(feedEffects, uploadEffects),
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule),
     importProvidersFrom(HttpClientModule),
