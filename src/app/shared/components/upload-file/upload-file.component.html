@@ -1,0 +1,13 @@
+<div class="container">
+  <h1 class="upload-text">
+    Click button below and select your .CSV file to upload
+  </h1>
+  <nz-upload
+    nzAction="http://localhost:3000/api/upload"
+    [nzHeaders]="{ authorization: 'authorization-text' }"
+    (nzChange)="handleChange($event)"
+    nzName="file"
+  >
+    <button nz-button>Click to Upload</button>
+  </nz-upload>
+</div>

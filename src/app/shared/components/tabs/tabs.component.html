@@ -1,0 +1,29 @@
+<div class="container">
+  <h2>Fetched Data:</h2>
+  <pre>{{ data | json }}</pre>
+</div>
+
+<div class="container">
+  <nz-tabset>
+    <nz-tab nzTitle="Pie Chart">
+      <ng-template nz-tab>
+        <app-pie></app-pie>
+      </ng-template>
+    </nz-tab>
+    <nz-tab nzTitle="Line Chart">
+      <ng-template nz-tab>
+        <app-line></app-line>
+      </ng-template>
+    </nz-tab>
+    <nz-tab nzTitle="Sunburst Chart">
+      <ng-template nz-tab>
+        <app-sunburst></app-sunburst>
+      </ng-template>
+    </nz-tab>
+    <nz-tab nzTitle="Stacked Chart">
+      <ng-template nz-tab>
+        <app-stacked></app-stacked>
+      </ng-template>
+    </nz-tab>
+  </nz-tabset>
+</div>

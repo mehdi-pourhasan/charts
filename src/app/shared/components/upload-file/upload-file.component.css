@@ -1,0 +1,20 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container {
+    border: 1px solid #eee;
+    text-align: center;
+    padding: 3rem;
+    border-radius: .5rem;
+}
+
+.upload-text {
+    color: #535c68;
+    margin-bottom: 2rem;
+    transition: color 0.3s;
+}
