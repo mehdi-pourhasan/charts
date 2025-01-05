@@ -1,12 +1,10 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { UploadDataInterface } from '../../../types/uploadData.interface'
+import { createActionGroup, props } from '@ngrx/store'
 
 // ACTIONS FOR UPLOADING DATA
 export const uploadActions = createActionGroup({
   source: 'UPLOAD',
   events: {
-    Upload: props<{ request: UploadDataInterface }>(),
+    Upload: props<{ file: File }>(),
     'Upload Success': props<{ response: any }>(),
-    'Upload Failure': emptyProps(),
   },
 })

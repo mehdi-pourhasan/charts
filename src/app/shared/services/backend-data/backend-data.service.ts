@@ -13,6 +13,7 @@ export class BackendDataService {
   uploadFile(file: File): Observable<any> {
     const formData = new FormData()
     formData.append('file', file)
+    console.log('Upload file proccess')
     return this.http.post(`${this.baseUrl}/upload`, formData)
   }
 

@@ -5,8 +5,6 @@ import { uploadActions } from './action'
 // UPLOAD REDUCERS
 const uploadInitialState: UploadStateInterface = {
   isSubmitting: false,
-  isLoading: false,
-  data: null,
 }
 
 const uploadFeature = createFeature({
@@ -14,12 +12,7 @@ const uploadFeature = createFeature({
   reducer: createReducer(
     uploadInitialState,
     on(uploadActions.upload, (state) => ({ ...state, isSubmitting: true })),
-    on(uploadActions.uploadSuccess, (state, action) => ({
-      ...state,
-      isSubmitting: false,
-      data: action.response,
-    })),
-    on(uploadActions.uploadFailure, (state) => ({
+    on(uploadActions.uploadSuccess, (state) => ({
       ...state,
       isSubmitting: false,
     }))
@@ -30,6 +23,4 @@ export const {
   name: uploadFeatureKey,
   reducer: uploadReducer,
   selectIsSubmitting,
-  selectIsLoading,
-  selectData: selectUploadData,
 } = uploadFeature

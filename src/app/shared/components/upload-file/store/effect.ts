@@ -2,23 +2,23 @@ import { inject } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { BackendDataService } from '../../../services/backend-data/backend-data.service'
 import { uploadActions } from './action'
-import { catchError, map, of, switchMap, tap } from 'rxjs'
+import { map, switchMap, tap } from 'rxjs'
 import { Router } from '@angular/router'
 
 // LISTENS TO ANY UPLOAD ACITONS WHEN DISPATCH FOR SIDE EFFECT
 export const UploadEffect = createEffect(
-  (actions$ = inject(Actions), backendService = inject(BackendDataService)) => {
+  (
+    actions$ = inject(Actions),
+    backendService = inject(BackendDataService),
+    router = inject(Router)
+  ) => {
     return actions$.pipe(
       ofType(uploadActions.upload),
-      switchMap(({ request }) =>
-        backendService.uploadFile(request.file).pipe(
+      switchMap(({ file }) =>
+        backendService.uploadFile(file).pipe(
           map((response) => {
-            console.log('Upload Success:', response) // Add logging
+            console.log('Upload Success:', response) // Log success
             return uploadActions.uploadSuccess({ response })
-          }),
-          catchError((error) => {
-            console.error('Upload Failure:', error) // Add logging
-            return of(uploadActions.uploadFailure())
           })
         )
       )
@@ -26,18 +26,14 @@ export const UploadEffect = createEffect(
   },
   { functional: true }
 )
-export const NavigateOnUploadSuccess = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) => {
-    return actions$.pipe(
+
+export const NavigateOnSuccessEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) =>
+    actions$.pipe(
       ofType(uploadActions.uploadSuccess),
       tap(() => {
-        console.log('Navigating to /info') // Add logging
-        router.navigate(['/info'])
+        router.navigate(['/info']) // Navigate on success
       })
-    )
-  },
-  {
-    functional: true,
-    dispatch: false,
-  }
+    ),
+  { functional: true, dispatch: false } // No action dispatched from this effect
 )

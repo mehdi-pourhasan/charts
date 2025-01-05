@@ -12,10 +12,11 @@ const feedFeature = createFeature({
   name: 'FEED',
   reducer: createReducer(
     feedInitialState,
+    // TODO SHOULD CHECK
     on(feedActions.fetchFeed, (state) => ({ ...state, isLoading: true })),
     on(feedActions.fetchFeedSuccess, (state, action) => ({
       ...state,
-      isLoading: true,
+      isLoading: false,
       data: action.response.data,
     })),
     on(feedActions.fetchFeed, (state) => ({ ...state, isLoading: false }))
