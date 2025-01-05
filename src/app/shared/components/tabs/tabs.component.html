@@ -1,21 +1,16 @@
 <ng-container *ngIf="data$ | async as data">
-  <!-- <div class="container">
-    <h2>Fetched Data:</h2>
-    <pre>{{ data | json }}</pre>
-  </div> -->
-
   <app-loading *ngIf="data.isLoading"></app-loading>
 
   <div *ngIf="!data.isLoading && data.feed" class="container">
     <nz-tabset>
       <nz-tab nzTitle="Pie Chart">
         <ng-template nz-tab>
-          <app-pie></app-pie>
+          <app-pie [pieData]="PieChartData"></app-pie>
         </ng-template>
       </nz-tab>
       <nz-tab nzTitle="Line Chart">
         <ng-template nz-tab>
-          <app-line></app-line>
+          <app-line [lineData]="lineChartData"></app-line>
         </ng-template>
       </nz-tab>
       <nz-tab nzTitle="Sunburst Chart">

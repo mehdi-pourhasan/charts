@@ -1,4 +1,11 @@
-import { Component, OnInit, ElementRef } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core'
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -10,6 +17,7 @@ import {
 import { LineChart } from 'echarts/charts'
 import { UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
+import { SalesData } from '../../types/salesData.interface'
 
 echarts.use([
   TitleComponent,
@@ -29,7 +37,9 @@ echarts.use([
     <div id="stacked-chart" style="width: 100%; height: 400px;"></div>
   `,
 })
-export class LineComponent implements OnInit {
+export class LineComponent implements OnInit, OnChanges {
+  @Input() public lineData!: SalesData
+
   private myChart: echarts.ECharts | null = null
 
   constructor(private el: ElementRef) {}
@@ -38,19 +48,46 @@ export class LineComponent implements OnInit {
     this.initlineChart()
   }
 
+  ngOnChanges(): void {
+    if (this.lineData) {
+      this.initlineChart() //Reinitialized if line data changes
+    }
+  }
+
   private initlineChart(): void {
     const chartDom = this.el.nativeElement.querySelector('#stacked-chart')
     this.myChart = echarts.init(chartDom)
 
+    const dates = Object.keys(this.lineData)
+    const bodyStyles = Array.from(
+      new Set(
+        Object.values(this.lineData).flatMap((styleData) =>
+          Object.keys(styleData)
+        )
+      )
+    ) // Get unique Body Styles
+
+    // Prepare series data for each model
+    const series = bodyStyles.map((bodyStyle) => {
+      return {
+        name: bodyStyle,
+        type: 'line',
+        stack: 'Total',
+        areaStyle: {}, // Enable stacked area style
+        data: dates.map((date) => this.lineData[date][bodyStyle] ?? 0), // Extract values for each bodyStyle per date
+      }
+    })
+
+    // Chart options
     const option = {
       title: {
-        text: 'Stacked Line Chart',
+        text: 'Car Sales Trends Over Time by Body Style',
       },
       tooltip: {
         trigger: 'axis',
       },
       legend: {
-        data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine'],
+        data: bodyStyles,
       },
       grid: {
         left: '3%',
@@ -65,46 +102,17 @@ export class LineComponent implements OnInit {
       },
       xAxis: {
         type: 'category',
-        boundaryGap: false,
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: dates,
       },
       yAxis: {
         type: 'value',
+        name: 'Sales',
       },
-      series: [
-        {
-          name: 'Email',
-          type: 'line',
-          stack: 'Total',
-          data: [120, 132, 101, 134, 90, 230, 210],
-        },
-        {
-          name: 'Union Ads',
-          type: 'line',
-          stack: 'Total',
-          data: [220, 182, 191, 234, 290, 330, 310],
-        },
-        {
-          name: 'Video Ads',
-          type: 'line',
-          stack: 'Total',
-          data: [150, 232, 201, 154, 190, 330, 410],
-        },
-        {
-          name: 'Direct',
-          type: 'line',
-          stack: 'Total',
-          data: [320, 332, 301, 334, 390, 330, 320],
-        },
-        {
-          name: 'Search Engine',
-          type: 'line',
-          stack: 'Total',
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
-        },
-      ],
+      series: series,
     }
 
-    this.myChart.setOption(option)
+    if (this.myChart) {
+      this.myChart.setOption(option)
+    }
   }
 }
