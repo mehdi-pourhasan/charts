@@ -1,7 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store'
-import { UploadStateInterface } from '../../types/upload.inteface'
+import { UploadStateInterface } from '../../../types/upload.inteface'
 import { uploadActions } from './action'
-import { FeedStateInterface } from '../../types/feed.interface'
 
 // UPLOAD REDUCERS
 const uploadInitialState: UploadStateInterface = {

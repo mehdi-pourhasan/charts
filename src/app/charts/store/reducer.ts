@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store'
 import { feedActions } from './action'
-import { FeedStateInterface } from '../../types/feed.interface'
+import { FeedStateInterface } from '../../shared/types/feed.interface'
 
 // FETCH REDUCERS
 const feedInitialState: FeedStateInterface = {

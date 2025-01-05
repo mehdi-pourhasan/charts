@@ -1,6 +1,6 @@
 import { inject } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { BackendDataService } from '../../services/backend-data/backend-data.service'
+import { BackendDataService } from '../../shared/services/backend-data/backend-data.service'
 import { feedActions } from './action'
 import { catchError, map, of, switchMap } from 'rxjs'
 
@@ -11,14 +11,10 @@ export const FeedEffect = createEffect(
       ofType(feedActions.fetchFeed),
       switchMap(() => {
         return backendService.getData().pipe(
-          map((response) => {
-            return feedActions.fetchFeedSuccess({
-              response: { data: response },
-            })
-          }),
-          catchError(() => {
-            return of(feedActions.fetchFeedFailure())
-          })
+          map((response) =>
+            feedActions.fetchFeedSuccess({ response: { data: response } })
+          ),
+          catchError(() => of(feedActions.fetchFeedFailure()))
         )
       })
     )

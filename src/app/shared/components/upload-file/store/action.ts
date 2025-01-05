@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { UploadDataInterface } from '../../types/uploadData.interface'
+import { UploadDataInterface } from '../../../types/uploadData.interface'
 
 // ACTIONS FOR UPLOADING DATA
 export const uploadActions = createActionGroup({

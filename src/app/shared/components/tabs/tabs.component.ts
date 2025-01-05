@@ -4,8 +4,12 @@ import { PieComponent } from '../../../charts/components/pie/pie.component'
 import { LineComponent } from '../../../charts/components/line/line.component'
 import { SunburstComponent } from '../../../charts/components/sunburst/sunburst.component'
 import { StackedComponent } from '../../../charts/components/stacked/stacked.component'
-import { BackendDataService } from '../../services/backend-data/backend-data.service'
 import { CommonModule } from '@angular/common'
+import { combineLatest } from 'rxjs'
+import { Store } from '@ngrx/store'
+import { selectFeedData, selectIsLoading } from '../../../charts/store/reducer'
+import { feedActions } from '../../../charts/store/action'
+import { LoadingComponent } from '../loading/loading.component'
 
 @Component({
   selector: 'app-tabs',
@@ -17,27 +21,26 @@ import { CommonModule } from '@angular/common'
     SunburstComponent,
     StackedComponent,
     CommonModule,
+    LoadingComponent,
   ],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
 })
 export class TabsComponent implements OnInit {
-  data: any[] = []
+  data$ = combineLatest({
+    isLoading: this.store.select(selectIsLoading),
+    feed: this.store.select(selectFeedData),
+  })
 
-  constructor(private backendService: BackendDataService) {}
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.fetchData()
-  }
+    this.store.dispatch(feedActions.fetchFeed())
 
-  fetchData(): void {
-    this.backendService.getData().subscribe({
-      next: (response) => {
-        this.data = response
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error)
-      },
+    this.data$.subscribe(({ isLoading, feed }) => {
+      if (!isLoading) {
+        console.log('DATA FETCHED FROM STORE =>>   ', feed)
+      }
     })
   }
 }

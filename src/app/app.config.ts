@@ -14,12 +14,15 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideStoreDevtools } from '@ngrx/store-devtools'
 import { provideRouterStore, routerReducer } from '@ngrx/router-store'
-import { uploadFeatureKey, uploadReducer } from './shared/store/upload/reducer'
-import { feedFeatureKey, feedReducer } from './shared/store/feed/reducer'
+import {
+  uploadFeatureKey,
+  uploadReducer,
+} from './shared/components/upload-file/store/reducer'
+import { feedFeatureKey, feedReducer } from './charts/store/reducer'
 import { provideEffects } from '@ngrx/effects'
 
-import * as feedEffects from './shared/store/feed/effect'
-import * as uploadEffects from './shared/store/upload/effect'
+import * as feedEffects from './charts/store/effect'
+import * as uploadEffects from './charts/store/effect'
 
 registerLocaleData(en)
 
