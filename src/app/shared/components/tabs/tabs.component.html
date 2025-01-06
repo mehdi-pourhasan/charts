@@ -15,12 +15,12 @@
       </nz-tab>
       <nz-tab nzTitle="Sunburst Chart">
         <ng-template nz-tab>
-          <app-sunburst></app-sunburst>
+          <app-sunburst [sunBurstData]="sunBurstChartData"></app-sunburst>
         </ng-template>
       </nz-tab>
       <nz-tab nzTitle="Stacked Chart">
         <ng-template nz-tab>
-          <app-stacked></app-stacked>
+          <app-stacked [stackedData]="stackedChartData"></app-stacked>
         </ng-template>
       </nz-tab>
     </nz-tabset>

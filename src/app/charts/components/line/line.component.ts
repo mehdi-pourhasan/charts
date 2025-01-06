@@ -34,7 +34,7 @@ echarts.use([
   standalone: true,
   imports: [],
   template: `
-    <div id="stacked-chart" style="width: 100%; height: 400px;"></div>
+    <div id="stacked-chart" style="width: 100%; height: 80rem;"></div>
   `,
 })
 export class LineComponent implements OnInit, OnChanges {

@@ -25,7 +25,7 @@ echarts.use([
   standalone: true,
   imports: [],
   template: `
-    <div id="pie-chart" style="width: 100%; height: 500px; margin: 2rem;"></div>
+    <div id="pie-chart" style="width: 100%; height: 80rem; margin: 2rem;"></div>
   `,
 })
 export class PieComponent implements OnInit {

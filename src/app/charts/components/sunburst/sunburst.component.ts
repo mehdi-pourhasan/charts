@@ -1,8 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core'
+import { Component, OnInit, AfterViewInit, Input } from '@angular/core'
 import * as echarts from 'echarts/core'
 import { TitleComponent, TitleComponentOption } from 'echarts/components'
 import { SunburstChart, SunburstSeriesOption } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
+import { ProfitOfRegionInterface } from '../../types/profitOfRegionData.interface'
+import { ProfitFilterService } from '../../services/profit-filter/profit-filter.service'
 
 echarts.use([TitleComponent, SunburstChart, CanvasRenderer])
 
@@ -15,145 +17,50 @@ type EChartsOption = echarts.ComposeOption<
   standalone: true,
   imports: [],
   template: `
-    <div id="sunburst-chart" style="width: 600px;"></div>
+    <div id="sunburst-chart" style="height: 80rem;"></div>
   `,
-  styles: [
-    `
-      :host {
-        margin: 0 auto;
-        display: block;
-        width: 50%;
-      }
-      #sunburst-chart {
-        height: 500px;
-        margin: 5rem 0;
-      }
-    `,
-  ],
+  // styles: [
+  //   `
+  //     :host {
+  //       margin: 0 auto;
+  //       display: block;
+  //       width: 50%;
+  //     }
+  //     #sunburst-chart {
+  //       height: 500px;
+  //       margin: 5rem 0;
+  //     }
+  //   `,
+  // ],
 })
 export class SunburstComponent implements AfterViewInit {
+  @Input() public sunBurstData!: ProfitOfRegionInterface[]
+
+  constructor(private profitFilterSrv: ProfitFilterService) {}
+
   ngAfterViewInit(): void {
     this.initSunburstChart()
+    console.log(this.sunBurstData)
   }
 
   private initSunburstChart(): void {
     const chartDom = document.getElementById('sunburst-chart')
     const myChart = echarts.init(chartDom)
 
-    const data = [
-      {
-        name: 'Flora',
-        itemStyle: { color: '#da0d68' },
-        children: [
-          {
-            name: 'Black Tea',
-            value: 1,
-            itemStyle: { color: '#975e6d' },
-          },
-          {
-            name: 'Floral',
-            itemStyle: { color: '#e0719c' },
-            children: [
-              {
-                name: 'Chamomile',
-                value: 1,
-                itemStyle: { color: '#f99e1c' },
-              },
-              {
-                name: 'Rose',
-                value: 1,
-                itemStyle: { color: '#ef5a78' },
-              },
-              {
-                name: 'Jasmine',
-                value: 1,
-                itemStyle: { color: '#f7f1bd' },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: 'Fruity',
-        itemStyle: { color: '#f26522' },
-        children: [
-          {
-            name: 'Berry',
-            itemStyle: { color: '#a64d79' },
-            children: [
-              {
-                name: 'Blueberry',
-                value: 1,
-                itemStyle: { color: '#6b2f8f' },
-              },
-              {
-                name: 'Raspberry',
-                value: 1,
-                itemStyle: { color: '#b73239' },
-              },
-            ],
-          },
-          {
-            name: 'Citrus',
-            itemStyle: { color: '#f7a541' },
-            children: [
-              {
-                name: 'Lemon',
-                value: 1,
-                itemStyle: { color: '#f3d32f' },
-              },
-              {
-                name: 'Orange',
-                value: 1,
-                itemStyle: { color: '#f78e2f' },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: 'Sour',
-        itemStyle: { color: '#b8d430' },
-        children: [
-          {
-            name: 'Tart',
-            value: 1,
-            itemStyle: { color: '#7a9b20' },
-          },
-          {
-            name: 'Tangy',
-            value: 1,
-            itemStyle: { color: '#9dc209' },
-          },
-        ],
-      },
-      {
-        name: 'Green',
-        itemStyle: { color: '#00a651' },
-        children: [
-          {
-            name: 'Herbaceous',
-            value: 1,
-            itemStyle: { color: '#3c8c4a' },
-          },
-          {
-            name: 'Grassy',
-            value: 1,
-            itemStyle: { color: '#8bc53f' },
-          },
-        ],
-      },
-    ]
+    const filteredData = this.profitFilterSrv.filterTopVendors(
+      this.sunBurstData,
+      4
+    )
 
     const option: EChartsOption = {
       title: {
-        text: 'Fake DATA',
-        textStyle: { fontSize: 14, align: 'center' },
+        text: 'Profitability of each region and vendors',
+        textStyle: { fontSize: 20, align: 'center' },
       },
       series: [
         {
           type: 'sunburst',
-          data: data,
+          data: filteredData,
           radius: [0, '90%'],
           label: {
             rotate: 'radial',

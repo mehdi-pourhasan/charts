@@ -10,9 +10,11 @@ import { Store } from '@ngrx/store'
 import { selectFeedData, selectIsLoading } from '../../../charts/store/reducer'
 import { feedActions } from '../../../charts/store/action'
 import { LoadingComponent } from '../loading/loading.component'
-import { BodyTypeCarsProcessorService } from '../../../charts/services/body-type/body-type-cars-processor.service'
+import { CarsProcessorService } from '../../../charts/services/data-processor/data-processor.service'
 import { SalesData } from '../../../charts/types/salesData.interface'
 import { CarTypeInterface } from '../../../charts/types/carTypeData.interface'
+import { ProfitOfRegionInterface } from '../../../charts/types/profitOfRegionData.interface'
+import { quarterlyIncomeInterface } from '../../../charts/types/quarterlyincomeData.interface'
 
 @Component({
   selector: 'app-tabs',
@@ -22,25 +24,29 @@ import { CarTypeInterface } from '../../../charts/types/carTypeData.interface'
     PieComponent,
     LineComponent,
     SunburstComponent,
-    StackedComponent,
     CommonModule,
     LoadingComponent,
+    StackedComponent,
   ],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
 })
 export class TabsComponent implements OnInit {
-  data$ = combineLatest({
+  // Fetch data from store
+  public data$ = combineLatest({
     isLoading: this.store.select(selectIsLoading),
     feed: this.store.select(selectFeedData),
   })
 
+  // filtered data for each component
   protected PieChartData!: CarTypeInterface
   protected lineChartData!: SalesData
+  protected sunBurstChartData!: ProfitOfRegionInterface[]
+  protected stackedChartData!: quarterlyIncomeInterface
 
   constructor(
     private store: Store,
-    private carProcessorByTypeSrv: BodyTypeCarsProcessorService
+    private carProcessorSrv: CarsProcessorService
   ) {}
 
   ngOnInit(): void {
@@ -49,9 +55,11 @@ export class TabsComponent implements OnInit {
     this.data$.subscribe(({ isLoading, feed }) => {
       if (!isLoading && feed) {
         console.log('DATA FETCHED FROM STORE =>>   ', feed)
-
-        this.PieChartData = this.carProcessorByTypeSrv.PieCharCars(feed)
-        this.lineChartData = this.carProcessorByTypeSrv.lineChartCars(feed)
+        this.PieChartData = this.carProcessorSrv.PieCharCars(feed)
+        this.lineChartData = this.carProcessorSrv.lineChartCars(feed)
+        this.sunBurstChartData = this.carProcessorSrv.sunBurstChartCars(feed)
+        this.stackedChartData = this.carProcessorSrv.stackedChartCars(feed)
+        // console.log('STACKED DATA ==>>>>   ', this.stackedChartData)
       }
     })
   }
