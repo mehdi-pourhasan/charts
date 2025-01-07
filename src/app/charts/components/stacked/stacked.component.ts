@@ -7,16 +7,26 @@ import {
   SimpleChanges,
   ElementRef,
 } from '@angular/core'
-import { EChartsOption } from 'echarts'
 import * as echarts from 'echarts'
 import { quarterlyIncomeInterface } from '../../types/quarterlyincomeData.interface'
 import { StackedOptionService } from '../../services/stacked-option/stacked-option.service'
+import { EditableTitleDirective } from '../../directives/editable-title/editable-title.directive'
 
 @Component({
   selector: 'app-stacked',
   standalone: true,
+  imports: [EditableTitleDirective],
   template: `
-    <div #chartContainer class="chart-container w-full h-96"></div>
+    <div class="chart-container">
+      <h1
+        appEditableTitle
+        [initialTitle]="chartTitle"
+        [initialFontSize]="charTitleFontSize"
+      >
+        Click to Edit
+      </h1>
+      <div #chartContainer class="chart-container w-full h-96"></div>
+    </div>
   `,
   styles: [
     `
@@ -27,6 +37,8 @@ import { StackedOptionService } from '../../services/stacked-option/stacked-opti
   ],
 })
 export class StackedComponent implements OnInit, OnChanges {
+  public chartTitle: string = 'The company income periodically'
+  public charTitleFontSize: number = 24
   @Input() public stackedData!: quarterlyIncomeInterface
 
   private chart: echarts.ECharts | null = null

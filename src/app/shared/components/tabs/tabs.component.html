@@ -3,21 +3,34 @@
 
   <div *ngIf="!data.isLoading && data.feed" class="container">
     <nz-tabset>
+      <!-- PIE COMPONENT -->
       <nz-tab nzTitle="Pie Chart">
         <ng-template nz-tab>
           <app-pie [pieData]="PieChartData"></app-pie>
         </ng-template>
       </nz-tab>
+
+      <!-- LINE COMPONENT -->
       <nz-tab nzTitle="Line Chart">
         <ng-template nz-tab>
-          <app-line [lineData]="lineChartData"></app-line>
+          <app-timeframe-filter
+            (timeframeChanged)="onTimeframeChanged($event)"
+          ></app-timeframe-filter>
+          <app-line
+            [lineData]="lineChartData"
+            class="chart-container"
+          ></app-line>
         </ng-template>
       </nz-tab>
+
+      <!-- SUNBURST COMPONENT -->
       <nz-tab nzTitle="Sunburst Chart">
         <ng-template nz-tab>
           <app-sunburst [sunBurstData]="sunBurstChartData"></app-sunburst>
         </ng-template>
       </nz-tab>
+
+      <!-- STACKED COMPONENT -->
       <nz-tab nzTitle="Stacked Chart">
         <ng-template nz-tab>
           <app-stacked [stackedData]="stackedChartData"></app-stacked>

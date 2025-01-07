@@ -5,6 +5,7 @@ import { SunburstChart, SunburstSeriesOption } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 import { ProfitOfRegionInterface } from '../../types/profitOfRegionData.interface'
 import { ProfitFilterService } from '../../services/profit-filter/profit-filter.service'
+import { EditableTitleDirective } from '../../directives/editable-title/editable-title.directive'
 
 echarts.use([TitleComponent, SunburstChart, CanvasRenderer])
 
@@ -15,25 +16,24 @@ type EChartsOption = echarts.ComposeOption<
 @Component({
   selector: 'app-sunburst',
   standalone: true,
-  imports: [],
+  imports: [EditableTitleDirective],
   template: `
-    <div id="sunburst-chart" style="height: 80rem;"></div>
+    <div class="chart-container">
+      <h1
+        appEditableTitle
+        [initialTitle]="chartTitle"
+        [initialFontSize]="charTitleFontSize"
+      >
+        Click to Edit
+      </h1>
+      <div id="sunburst-chart" style="height: 80rem;"></div>
+    </div>
   `,
-  // styles: [
-  //   `
-  //     :host {
-  //       margin: 0 auto;
-  //       display: block;
-  //       width: 50%;
-  //     }
-  //     #sunburst-chart {
-  //       height: 500px;
-  //       margin: 5rem 0;
-  //     }
-  //   `,
-  // ],
 })
 export class SunburstComponent implements AfterViewInit {
+  public chartTitle: string =
+    'Profitability of different regions and sellers in each region'
+  public charTitleFontSize: number = 24
   @Input() public sunBurstData!: ProfitOfRegionInterface[]
 
   constructor(private profitFilterSrv: ProfitFilterService) {}
@@ -53,10 +53,6 @@ export class SunburstComponent implements AfterViewInit {
     )
 
     const option: EChartsOption = {
-      title: {
-        text: 'Profitability of each region and vendors',
-        textStyle: { fontSize: 20, align: 'center' },
-      },
       series: [
         {
           type: 'sunburst',

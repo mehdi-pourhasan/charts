@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core'
+import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core'
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -18,6 +11,7 @@ import { LineChart } from 'echarts/charts'
 import { UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 import { SalesData } from '../../types/salesData.interface'
+import { EditableTitleDirective } from '../../directives/editable-title/editable-title.directive'
 
 echarts.use([
   TitleComponent,
@@ -32,12 +26,25 @@ echarts.use([
 @Component({
   selector: 'app-line',
   standalone: true,
-  imports: [],
+  imports: [EditableTitleDirective],
   template: `
-    <div id="stacked-chart" style="width: 100%; height: 80rem;"></div>
+    <div class="chart-container">
+      <h1
+        appEditableTitle
+        [initialTitle]="chartTitle"
+        [initialFontSize]="charTitleFontSize"
+      >
+        Click to Edit
+      </h1>
+      <div id="stacked-chart" style="width: 100%; height: 80rem;"></div>
+    </div>
   `,
+  styles: [``],
 })
 export class LineComponent implements OnInit, OnChanges {
+  public chartTitle: string = 'Number of car sales by chassis type'
+  public charTitleFontSize: number = 24
+
   @Input() public lineData!: SalesData
 
   private myChart: echarts.ECharts | null = null
@@ -50,7 +57,7 @@ export class LineComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     if (this.lineData) {
-      this.initlineChart() //Reinitialized if line data changes
+      this.initlineChart() // Reinitialize if line data changes
     }
   }
 
@@ -73,18 +80,18 @@ export class LineComponent implements OnInit, OnChanges {
         name: bodyStyle,
         type: 'line',
         stack: 'Total',
-        areaStyle: {}, // Enable stacked area style
+        emphasis: {
+          focus: 'series',
+        },
         data: dates.map((date) => this.lineData[date][bodyStyle] ?? 0), // Extract values for each bodyStyle per date
       }
     })
 
     // Chart options
     const option = {
-      title: {
-        text: 'Car Sales Trends Over Time by Body Style',
-      },
       tooltip: {
         trigger: 'axis',
+        backgroundColor: '#fff',
       },
       legend: {
         data: bodyStyles,
@@ -94,6 +101,8 @@ export class LineComponent implements OnInit, OnChanges {
         right: '4%',
         bottom: '3%',
         containLabel: true,
+        show: false,
+        backgroundColor: 'rgba(0,0,0,0)',
       },
       toolbox: {
         feature: {
@@ -102,6 +111,7 @@ export class LineComponent implements OnInit, OnChanges {
       },
       xAxis: {
         type: 'category',
+        boundaryGap: false,
         data: dates,
       },
       yAxis: {

@@ -24,8 +24,11 @@ export class DataProcessorService {
     return this.pieChartSrv.processData(cars)
   }
 
-  public lineChartCars(cars: CarsInterface[]): SalesData {
-    return this.lineChartSrv.processData(cars)
+  public lineChartCars(
+    cars: CarsInterface[],
+    timeFrame: 'weekly' | 'monthly' | 'quarterly' | 'semiannual' | 'annual'
+  ): SalesData {
+    return this.lineChartSrv.processData(cars, timeFrame)
   }
 
   public sunBurstChartCars(cars: CarsInterface[]): ProfitOfRegionInterface[] {

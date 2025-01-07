@@ -17,6 +17,12 @@
     font-style: normal;
 }
 
+.chart-container h1 {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
 html {
     font-size: 62.5%;
     font-family: "Ubuntu", serif;

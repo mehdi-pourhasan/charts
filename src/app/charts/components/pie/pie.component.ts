@@ -10,6 +10,7 @@ import { LabelLayout } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 import { TransformationService } from '../../services/body-type-transform/transform.service'
 import { CarTypeInterface } from '../../types/carTypeData.interface'
+import { EditableTitleDirective } from '../../directives/editable-title/editable-title.directive'
 
 echarts.use([
   TitleComponent,
@@ -23,12 +24,23 @@ echarts.use([
 @Component({
   selector: 'app-pie',
   standalone: true,
-  imports: [],
+  imports: [EditableTitleDirective],
   template: `
-    <div id="pie-chart" style="width: 100%; height: 80rem; margin: 2rem;"></div>
+    <div class="chart-container">
+      <h1
+        appEditableTitle
+        [initialTitle]="chartTitle"
+        [initialFontSize]="charTitleFontSize"
+      >
+        Click to Edit
+      </h1>
+      <div id="pie-chart" style="width: 100%; height: 60rem; "></div>
+    </div>
   `,
 })
 export class PieComponent implements OnInit {
+  public chartTitle: string = 'Sales trends of different car models'
+  public charTitleFontSize: number = 24
   @Input() public pieData!: CarTypeInterface
 
   constructor(
@@ -38,7 +50,6 @@ export class PieComponent implements OnInit {
 
   ngOnInit(): void {
     this.pieChartInit()
-    console.log('Received Body Style Counts in PieComponent:', this.pieData)
   }
 
   private pieChartInit(): void {
@@ -50,10 +61,6 @@ export class PieComponent implements OnInit {
     const chartData = Object.keys(this.pieData)
 
     const option = {
-      title: {
-        text: 'Number of car sales Based on chassis type',
-        left: 'center',
-      },
       tooltip: {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)',

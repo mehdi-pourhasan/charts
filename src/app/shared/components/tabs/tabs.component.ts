@@ -15,6 +15,7 @@ import { SalesData } from '../../../charts/types/salesData.interface'
 import { CarTypeInterface } from '../../../charts/types/carTypeData.interface'
 import { ProfitOfRegionInterface } from '../../../charts/types/profitOfRegionData.interface'
 import { quarterlyIncomeInterface } from '../../../charts/types/quarterlyincomeData.interface'
+import { TimeframeFilterComponent } from '../timeframe-filter/timeframe-filter.component'
 
 @Component({
   selector: 'app-tabs',
@@ -27,18 +28,24 @@ import { quarterlyIncomeInterface } from '../../../charts/types/quarterlyincomeD
     CommonModule,
     LoadingComponent,
     StackedComponent,
+    CommonModule,
+    TimeframeFilterComponent,
   ],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
 })
 export class TabsComponent implements OnInit {
-  // Fetch data from store
   public data$ = combineLatest({
     isLoading: this.store.select(selectIsLoading),
     feed: this.store.select(selectFeedData),
   })
+  public selectedTimeframe:
+    | 'weekly'
+    | 'monthly'
+    | 'quarterly'
+    | 'semiannual'
+    | 'annual' = 'monthly'
 
-  // filtered data for each component
   protected PieChartData!: CarTypeInterface
   protected lineChartData!: SalesData
   protected sunBurstChartData!: ProfitOfRegionInterface[]
@@ -54,13 +61,27 @@ export class TabsComponent implements OnInit {
 
     this.data$.subscribe(({ isLoading, feed }) => {
       if (!isLoading && feed) {
-        console.log('DATA FETCHED FROM STORE =>>   ', feed)
         this.PieChartData = this.dataProcessorSrv.pieChartCars(feed)
-
-        this.lineChartData = this.dataProcessorSrv.lineChartCars(feed)
+        this.lineChartData = this.dataProcessorSrv.lineChartCars(
+          feed,
+          this.selectedTimeframe
+        )
         this.sunBurstChartData = this.dataProcessorSrv.sunBurstChartCars(feed)
         this.stackedChartData = this.dataProcessorSrv.stackedChartCars(feed)
-        // console.log('STACKED DATA ==>>>>   ', this.stackedChartData)
+      }
+    })
+  }
+
+  public onTimeframeChanged(
+    timeframe: 'weekly' | 'monthly' | 'quarterly' | 'semiannual' | 'annual'
+  ): void {
+    this.selectedTimeframe = timeframe
+    this.data$.subscribe(({ feed }) => {
+      if (feed) {
+        this.lineChartData = this.dataProcessorSrv.lineChartCars(
+          feed,
+          this.selectedTimeframe
+        )
       }
     })
   }
