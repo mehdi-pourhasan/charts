@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store'
 import { selectFeedData, selectIsLoading } from '../../../charts/store/reducer'
 import { feedActions } from '../../../charts/store/action'
 import { LoadingComponent } from '../loading/loading.component'
-import { CarsProcessorService } from '../../../charts/services/data-processor/data-processor.service'
+import { DataProcessorService } from '../../../charts/services/data-processor/data-processor.service'
 import { SalesData } from '../../../charts/types/salesData.interface'
 import { CarTypeInterface } from '../../../charts/types/carTypeData.interface'
 import { ProfitOfRegionInterface } from '../../../charts/types/profitOfRegionData.interface'
@@ -46,7 +46,7 @@ export class TabsComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private carProcessorSrv: CarsProcessorService
+    private dataProcessorSrv: DataProcessorService
   ) {}
 
   ngOnInit(): void {
@@ -55,10 +55,11 @@ export class TabsComponent implements OnInit {
     this.data$.subscribe(({ isLoading, feed }) => {
       if (!isLoading && feed) {
         console.log('DATA FETCHED FROM STORE =>>   ', feed)
-        this.PieChartData = this.carProcessorSrv.PieCharCars(feed)
-        this.lineChartData = this.carProcessorSrv.lineChartCars(feed)
-        this.sunBurstChartData = this.carProcessorSrv.sunBurstChartCars(feed)
-        this.stackedChartData = this.carProcessorSrv.stackedChartCars(feed)
+        this.PieChartData = this.dataProcessorSrv.pieChartCars(feed)
+
+        this.lineChartData = this.dataProcessorSrv.lineChartCars(feed)
+        this.sunBurstChartData = this.dataProcessorSrv.sunBurstChartCars(feed)
+        this.stackedChartData = this.dataProcessorSrv.stackedChartCars(feed)
         // console.log('STACKED DATA ==>>>>   ', this.stackedChartData)
       }
     })

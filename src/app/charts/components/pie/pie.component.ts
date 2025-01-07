@@ -51,8 +51,7 @@ export class PieComponent implements OnInit {
 
     const option = {
       title: {
-        text: 'Number of car sales',
-        subtext: 'Based on chassis type',
+        text: 'Number of car sales Based on chassis type',
         left: 'center',
       },
       tooltip: {
