@@ -63,7 +63,7 @@ export class LineComponent implements OnInit, OnChanges {
 
   private initlineChart(): void {
     const chartDom = this.el.nativeElement.querySelector('#stacked-chart')
-    this.myChart = echarts.init(chartDom)
+    this.myChart = echarts.init(chartDom, 'Cool')
 
     const dates = Object.keys(this.lineData)
     const bodyStyles = Array.from(

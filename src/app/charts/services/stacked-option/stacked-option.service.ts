@@ -8,8 +8,7 @@ import { quarterlyIncomeInterface } from '../../types/quarterlyincomeData.interf
 })
 export class StackedOptionService {
   getChartOptions(data: quarterlyIncomeInterface): EChartsOption {
-    // Transform data for percentage calculation
-    const transformedSeries = this.transformToPercentage(data)
+    const transformedSeries = this.transformToSum(data)
 
     return {
       tooltip: {
@@ -20,7 +19,7 @@ export class StackedOptionService {
         formatter: (params: any) => {
           let tooltip = `${params[0].axisValue}<br/>`
           params.forEach((param: any) => {
-            tooltip += `${param.seriesName}: ${param.value.toFixed(1)}%<br/>`
+            tooltip += `${param.seriesName}: ${param.value.toFixed(1)}<br/>`
           })
           return tooltip
         },
@@ -31,7 +30,7 @@ export class StackedOptionService {
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '15%',
         containLabel: true,
       },
       xAxis: {
@@ -41,29 +40,31 @@ export class StackedOptionService {
       yAxis: {
         type: 'value',
         axisLabel: {
-          formatter: '{value}%',
+          formatter: '{value}',
         },
       },
+      dataZoom: [
+        {
+          type: 'slider', // X Slider
+          start: 0, // start at 0
+          end: 100, // end at 100
+          xAxisIndex: 0, // at X
+        },
+      ],
       series: transformedSeries,
     }
   }
 
-  private transformToPercentage(data: quarterlyIncomeInterface): any[] {
-    const totalsByQuarter = data.categories.map((_, index) => {
-      return data.series.reduce((sum, series) => sum + series.data[index], 0)
-    })
-
+  private transformToSum(data: quarterlyIncomeInterface): any[] {
     return data.series.map((series) => ({
       name: series.name,
       type: 'bar',
       stack: 'total',
       label: {
-        show: true,
-        formatter: '{c}%',
+        show: false,
+        formatter: '{c}',
       },
-      data: series.data.map((value, index) =>
-        ((value / totalsByQuarter[index]) * 100).toFixed(1)
-      ),
+      data: series.data,
     }))
   }
 }

@@ -12,8 +12,8 @@ export class ProfitFilterService {
     return data.map((region) => ({
       ...region,
       children: region.children
-        ?.sort((a, b) => (b.value as number) - (a.value as number)) // مرتب کردن بر اساس مقدار سود
-        .slice(0, topN), // انتخاب n فروشنده برتر
+        ?.sort((a, b) => (b.value as number) - (a.value as number)) // Sort by profit
+        .slice(0, topN), // Select N upper seller
     }))
   }
 }

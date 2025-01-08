@@ -25,7 +25,7 @@ import { EditableTitleDirective } from '../../directives/editable-title/editable
       >
         Click to Edit
       </h1>
-      <div #chartContainer class="chart-container w-full h-96"></div>
+      <div #chartContainer class="chart-container w-full "></div>
     </div>
   `,
   styles: [
