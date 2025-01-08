@@ -2,11 +2,15 @@
   <app-loading *ngIf="data.isLoading"></app-loading>
 
   <div *ngIf="!data.isLoading && data.feed" class="container">
-    <nz-tabset>
+    <nz-tabset [nzTabBarExtraContent]="chartSettings">
       <!-- PIE COMPONENT -->
       <nz-tab nzTitle="Pie Chart">
         <ng-template nz-tab>
-          <app-pie [pieData]="PieChartData"></app-pie>
+          <app-pie
+            [pieData]="PieChartData"
+            [background]="data.background"
+            [theme]="data.theme"
+          ></app-pie>
         </ng-template>
       </nz-tab>
 
@@ -37,5 +41,11 @@
         </ng-template>
       </nz-tab>
     </nz-tabset>
+
+    <ng-template #chartSettings>
+      <button (click)="openModal()" nz-button>Settings</button>
+    </ng-template>
   </div>
 </ng-container>
+
+<app-modal></app-modal>

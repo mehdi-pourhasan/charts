@@ -17,12 +17,17 @@ import { provideRouterStore, routerReducer } from '@ngrx/router-store'
 import {
   uploadFeatureKey,
   uploadReducer,
-} from './shared/components/upload-file/store/reducer'
+} from './shared/store/upload-file/reducer'
 import { feedFeatureKey, feedReducer } from './charts/store/reducer'
 import { provideEffects } from '@ngrx/effects'
 
 import * as feedEffects from './charts/store/effect'
 import * as uploadEffects from './charts/store/effect'
+import * as themeSettingsEffect from './shared/store/theme/effects'
+import {
+  themeSettingsFeatureKey,
+  themeSettingsReducer,
+} from './shared/store/theme/reducer'
 
 registerLocaleData(en)
 
@@ -34,9 +39,10 @@ export const appConfig: ApplicationConfig = {
       router: routerReducer,
     }),
     provideRouterStore(),
+    provideState(themeSettingsFeatureKey, themeSettingsReducer),
     provideState(uploadFeatureKey, uploadReducer),
     provideState(feedFeatureKey, feedReducer),
-    provideEffects(feedEffects, uploadEffects),
+    provideEffects(feedEffects, uploadEffects, themeSettingsEffect),
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule),
     importProvidersFrom(HttpClientModule),

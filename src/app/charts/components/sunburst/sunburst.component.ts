@@ -10,6 +10,8 @@ import { NzInputModule } from 'ng-zorro-antd/input'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { FormsModule } from '@angular/forms'
 import { CommonModule } from '@angular/common'
+import { Store } from '@ngrx/store'
+import { Observable } from 'rxjs'
 
 echarts.use([TitleComponent, SunburstChart, CanvasRenderer])
 
@@ -73,7 +75,7 @@ export class SunburstComponent implements AfterViewInit {
 
   private initSunburstChart(): void {
     const chartDom = document.getElementById('sunburst-chart')
-    this.myChart = echarts.init(chartDom, 'Cool')
+    this.myChart = echarts.init(chartDom)
 
     const filteredData = this.profitFilterSrv.filterTopVendors(
       this.sunBurstData,

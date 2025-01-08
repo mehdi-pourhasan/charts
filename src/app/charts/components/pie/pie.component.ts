@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit } from '@angular/core'
+import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core'
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -11,6 +11,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { TransformationService } from '../../services/body-type-transform/transform.service'
 import { CarTypeInterface } from '../../types/carTypeData.interface'
 import { EditableTitleDirective } from '../../directives/editable-title/editable-title.directive'
+import { ThemeManagementService } from '../../services/theme-management/theme-management.service'
 
 echarts.use([
   TitleComponent,
@@ -34,27 +35,44 @@ echarts.use([
       >
         Click to Edit
       </h1>
-      <div id="pie-chart" style="width: 100%; height: 60rem; "></div>
+      <div
+        id="pie-chart"
+        [style.background-color]="background"
+        style="width: 100%; height: 60rem; "
+      ></div>
     </div>
   `,
 })
-export class PieComponent implements OnInit {
+export class PieComponent implements OnInit, OnDestroy {
   public chartTitle: string = 'Sales trends of different car models'
   public charTitleFontSize: number = 24
+  private myChart: echarts.ECharts | null = null
+
   @Input() public pieData!: CarTypeInterface
+  @Input()
+  public background!: string
+  @Input()
+  public theme!: string
 
   constructor(
     private el: ElementRef,
-    private transformSrv: TransformationService
+    private transformSrv: TransformationService,
+    private themeSrv: ThemeManagementService
   ) {}
 
   ngOnInit(): void {
     this.pieChartInit()
   }
 
+  ngOnDestroy(): void {
+    if (this.myChart) {
+      this.myChart.dispose()
+    }
+  }
+
   private pieChartInit(): void {
     const chartDom = this.el.nativeElement.querySelector('#pie-chart')
-    const myChart = echarts.init(chartDom)
+    this.myChart = echarts.init(chartDom, this.themeSrv.getTheme(this.theme))
 
     // Transform carsType data for the chart
     const data = this.transformSrv.transformData(this.pieData)
@@ -88,6 +106,6 @@ export class PieComponent implements OnInit {
       ],
     }
 
-    myChart.setOption(option)
+    this.myChart.setOption(option)
   }
 }

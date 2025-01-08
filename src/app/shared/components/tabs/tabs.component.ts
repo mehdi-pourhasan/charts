@@ -16,11 +16,17 @@ import { CarTypeInterface } from '../../../charts/types/carTypeData.interface'
 import { ProfitOfRegionInterface } from '../../../charts/types/profitOfRegionData.interface'
 import { quarterlyIncomeInterface } from '../../../charts/types/quarterlyincomeData.interface'
 import { TimeframeFilterComponent } from '../timeframe-filter/timeframe-filter.component'
+import { NzButtonModule } from 'ng-zorro-antd/button'
+import { ModalService } from '../../services/modal/modal.service'
+import { ModalComponent } from '../modal/modal.component'
+import { selectBackgroundColor, selectTheme } from '../../store/theme/reducer'
+import { themeSettingsActions } from '../../store/theme/action'
 
 @Component({
   selector: 'app-tabs',
   standalone: true,
   imports: [
+    NzButtonModule,
     NzTabsModule,
     PieComponent,
     LineComponent,
@@ -30,6 +36,7 @@ import { TimeframeFilterComponent } from '../timeframe-filter/timeframe-filter.c
     StackedComponent,
     CommonModule,
     TimeframeFilterComponent,
+    ModalComponent,
   ],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
@@ -38,6 +45,8 @@ export class TabsComponent implements OnInit {
   public data$ = combineLatest({
     isLoading: this.store.select(selectIsLoading),
     feed: this.store.select(selectFeedData),
+    background: this.store.select(selectBackgroundColor),
+    theme: this.store.select(selectTheme),
   })
   public selectedTimeframe:
     | 'weekly'
@@ -53,11 +62,13 @@ export class TabsComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private dataProcessorSrv: DataProcessorService
+    private dataProcessorSrv: DataProcessorService,
+    private modalSrv: ModalService
   ) {}
 
   ngOnInit(): void {
     this.store.dispatch(feedActions.fetchFeed())
+    this.store.dispatch(themeSettingsActions.fetchThemeSettings())
 
     this.data$.subscribe(({ isLoading, feed }) => {
       if (!isLoading && feed) {
@@ -84,5 +95,9 @@ export class TabsComponent implements OnInit {
         )
       }
     })
+  }
+
+  public openModal() {
+    this.modalSrv.openModal()
   }
 }

@@ -4,7 +4,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload'
 import { Store } from '@ngrx/store'
 import { UploadDataInterface } from '../../types/uploadData.interface'
-import { uploadActions } from './store/action'
+import { uploadActions } from '../../store/upload-file/action'
 import { BackendDataService } from '../../services/backend-data/backend-data.service'
 import { Router } from '@angular/router'
 

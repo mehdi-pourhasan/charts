@@ -1,0 +1,31 @@
+<div *ngIf="isModalVisible" class="modal-container" (click)="onClose()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-item">
+      <span class="modat-title">cahrts background:</span>
+      <input
+        nz-input
+        placeholder="background color in HEX"
+        [(ngModel)]="backgroundColor"
+        type="string"
+      />
+    </div>
+
+    <div class="modal-item">
+      <span class="modat-title">cahrts theme:</span>
+      <nz-select
+        class="modal-select"
+        nzPlaceHolder="Select Theme"
+        [(ngModel)]="selectedTheme"
+      >
+        <nz-option
+          *ngFor="let e of chartsTheme"
+          [nzValue]="e"
+          [nzLabel]="e | capitalizeFirstLetter"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <button nz-button class="modal-btn" (click)="onSubmit()" nzType="primary">
+      Update Settings
+    </button>
+  </div>
+</div>

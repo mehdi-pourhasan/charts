@@ -1,5 +1,5 @@
 import { createFeature, createReducer, on } from '@ngrx/store'
-import { UploadStateInterface } from '../../../types/upload.inteface'
+import { UploadStateInterface } from '../../types/upload.inteface'
 import { uploadActions } from './action'
 
 // UPLOAD REDUCERS

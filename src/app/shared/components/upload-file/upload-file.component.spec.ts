@@ -6,7 +6,7 @@ import { BackendDataService } from '../../services/backend-data/backend-data.ser
 import { Router } from '@angular/router'
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload'
 import { of } from 'rxjs'
-import { uploadActions } from './store/action'
+import { uploadActions } from '../../store/upload-file/action'
 
 describe('UploadFileComponent', () => {
   // تعریف متغیر ها

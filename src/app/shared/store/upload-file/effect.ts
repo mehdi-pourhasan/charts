@@ -1,6 +1,6 @@
 import { inject } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { BackendDataService } from '../../../services/backend-data/backend-data.service'
+import { BackendDataService } from '../../services/backend-data/backend-data.service'
 import { uploadActions } from './action'
 import { map, switchMap, tap } from 'rxjs'
 import { Router } from '@angular/router'
