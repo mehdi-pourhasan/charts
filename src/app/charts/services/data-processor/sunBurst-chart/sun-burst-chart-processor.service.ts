@@ -10,7 +10,9 @@ import { GenerateRandomColorService } from '../../../../shared/services/random-c
 export class SunBurstChartDataProcessorService
   implements ChartDataProcessorInterface
 {
-  constructor(private randomColorSrv: GenerateRandomColorService) {}
+  public constructor(
+    private readonly randomColorSrv: GenerateRandomColorService
+  ) {}
 
   // SUNBURST CHART COMPONENT DATA
   processData(cars: CarsInterface[]): ProfitOfRegionInterface[] {

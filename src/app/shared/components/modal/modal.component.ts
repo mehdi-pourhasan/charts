@@ -30,10 +30,10 @@ export class ModalComponent implements OnInit {
   public chartsTheme: string[]
   public isModalVisible: boolean = false
 
-  constructor(
-    private modalSrv: ModalService,
-    private store: Store,
-    private themeSrv: ThemeManagementService
+  public constructor(
+    private readonly modalSrv: ModalService,
+    private readonly store: Store,
+    private readonly themeSrv: ThemeManagementService
   ) {
     this.chartsTheme = this.themeSrv.getAvailableThemes()
   }
@@ -49,7 +49,6 @@ export class ModalComponent implements OnInit {
   }
 
   public onUpdate(): void {
-    // TODO LOGIC GOES HERE
     this.modalSrv.closeModal()
   }
 
@@ -64,7 +63,7 @@ export class ModalComponent implements OnInit {
     this.onClose()
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
+  @HostListener('document:keydown.escape')
   onEscKey(event: KeyboardEvent): void {
     this.onClose()
   }

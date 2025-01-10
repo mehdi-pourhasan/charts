@@ -10,7 +10,6 @@ export class PieChartDataProcessorService
   implements ChartDataProcessorInterface
 {
   // PIE CHART COMPONENT DATA
-  // برای شمارش نوع ماشین ها بر اساس شاسی
   processData(cars: CarsInterface[]): CarTypeInterface {
     const bodyTypeCarsCount: CarTypeInterface = {}
 

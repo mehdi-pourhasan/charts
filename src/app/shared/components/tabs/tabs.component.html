@@ -22,6 +22,8 @@
           ></app-timeframe-filter>
           <app-line
             [lineData]="lineChartData"
+            [background]="data.background"
+            [theme]="data.theme"
             class="chart-container"
           ></app-line>
         </ng-template>
@@ -30,14 +32,22 @@
       <!-- SUNBURST COMPONENT -->
       <nz-tab nzTitle="Sunburst Chart">
         <ng-template nz-tab>
-          <app-sunburst [sunBurstData]="sunBurstChartData"></app-sunburst>
+          <app-sunburst
+            [background]="data.background"
+            [theme]="data.theme"
+            [sunBurstData]="sunBurstChartData"
+          ></app-sunburst>
         </ng-template>
       </nz-tab>
 
       <!-- STACKED COMPONENT -->
       <nz-tab nzTitle="Stacked Chart">
         <ng-template nz-tab>
-          <app-stacked [stackedData]="stackedChartData"></app-stacked>
+          <app-stacked
+            [background]="data.background"
+            [theme]="data.theme"
+            [stackedData]="stackedChartData"
+          ></app-stacked>
         </ng-template>
       </nz-tab>
     </nz-tabset>

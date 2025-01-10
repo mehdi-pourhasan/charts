@@ -24,10 +24,10 @@ export class EditableTitleDirective implements OnInit, OnDestroy {
   private currentTitle: string
   private currentFontSize: number
 
-  constructor(
-    private el: ElementRef,
-    private viewContainerRef: ViewContainerRef,
-    private renderer: Renderer2
+  public constructor(
+    private readonly el: ElementRef,
+    private readonly viewContainerRef: ViewContainerRef,
+    private readonly renderer: Renderer2
   ) {
     this.renderer.setStyle(this.el.nativeElement, 'cursor', 'pointer')
     // Initialize with empty values, will be set in ngOnInit

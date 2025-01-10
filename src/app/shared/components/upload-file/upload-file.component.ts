@@ -16,15 +16,11 @@ import { Router } from '@angular/router'
   styleUrls: ['./upload-file.component.css'],
 })
 export class UploadFileComponent {
-  constructor(
-    private store: Store,
-    private backendSrv: BackendDataService,
-    private router: Router
+  public constructor(
+    private readonly store: Store,
+    private readonly backendSrv: BackendDataService,
+    private readonly router: Router
   ) {}
-
-  // handleChange(info: NzUploadChangeParam): void {
-  //   this.uploadService.handleUpload(info)
-  // }
 
   handleChange(info: NzUploadChangeParam): void {
     if (info.file.status !== 'uploading' && info.file.originFileObj) {
@@ -37,7 +33,6 @@ export class UploadFileComponent {
       this.backendSrv.uploadFile(uploadData.file).subscribe({
         next: (response) => {
           this.store.dispatch(uploadActions.uploadSuccess({ response }))
-          // TODO SHOULD CHECK NAVIGATE BY STATE
           this.router.navigate(['/info'])
         },
         error: () => {

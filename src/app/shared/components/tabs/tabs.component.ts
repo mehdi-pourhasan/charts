@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { NzTabsModule } from 'ng-zorro-antd/tabs'
 import { PieComponent } from '../../../charts/components/pie/pie.component'
 import { LineComponent } from '../../../charts/components/line/line.component'
 import { SunburstComponent } from '../../../charts/components/sunburst/sunburst.component'
 import { StackedComponent } from '../../../charts/components/stacked/stacked.component'
 import { CommonModule } from '@angular/common'
-import { combineLatest } from 'rxjs'
+import { combineLatest, Subject, takeUntil } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { selectFeedData, selectIsLoading } from '../../../charts/store/reducer'
 import { feedActions } from '../../../charts/store/action'
@@ -41,13 +41,21 @@ import { themeSettingsActions } from '../../store/theme/action'
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
 })
-export class TabsComponent implements OnInit {
+export class TabsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>()
+
   public data$ = combineLatest({
     isLoading: this.store.select(selectIsLoading),
     feed: this.store.select(selectFeedData),
     background: this.store.select(selectBackgroundColor),
     theme: this.store.select(selectTheme),
   })
+
+  public PieChartData!: CarTypeInterface
+  public lineChartData!: SalesData
+  public sunBurstChartData!: ProfitOfRegionInterface[]
+  public stackedChartData!: quarterlyIncomeInterface
+
   public selectedTimeframe:
     | 'weekly'
     | 'monthly'
@@ -55,39 +63,45 @@ export class TabsComponent implements OnInit {
     | 'semiannual'
     | 'annual' = 'monthly'
 
-  protected PieChartData!: CarTypeInterface
-  protected lineChartData!: SalesData
-  protected sunBurstChartData!: ProfitOfRegionInterface[]
-  protected stackedChartData!: quarterlyIncomeInterface
-
   constructor(
-    private store: Store,
-    private dataProcessorSrv: DataProcessorService,
-    private modalSrv: ModalService
+    private readonly store: Store,
+    private readonly dataProcessorSrv: DataProcessorService,
+    private readonly modalSrv: ModalService
   ) {}
 
   ngOnInit(): void {
     this.store.dispatch(feedActions.fetchFeed())
     this.store.dispatch(themeSettingsActions.fetchThemeSettings())
 
-    this.data$.subscribe(({ isLoading, feed }) => {
-      if (!isLoading && feed) {
-        this.PieChartData = this.dataProcessorSrv.pieChartCars(feed)
-        this.lineChartData = this.dataProcessorSrv.lineChartCars(
-          feed,
-          this.selectedTimeframe
-        )
-        this.sunBurstChartData = this.dataProcessorSrv.sunBurstChartCars(feed)
-        this.stackedChartData = this.dataProcessorSrv.stackedChartCars(feed)
-      }
-    })
+    this.data$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ isLoading, feed }) => {
+        if (!isLoading && feed) {
+          this.updateChartData(feed)
+        }
+      })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
+
+  private updateChartData(feed: any): void {
+    this.PieChartData = this.dataProcessorSrv.pieChartCars(feed)
+    this.lineChartData = this.dataProcessorSrv.lineChartCars(
+      feed,
+      this.selectedTimeframe
+    )
+    this.sunBurstChartData = this.dataProcessorSrv.sunBurstChartCars(feed)
+    this.stackedChartData = this.dataProcessorSrv.stackedChartCars(feed)
   }
 
   public onTimeframeChanged(
     timeframe: 'weekly' | 'monthly' | 'quarterly' | 'semiannual' | 'annual'
   ): void {
     this.selectedTimeframe = timeframe
-    this.data$.subscribe(({ feed }) => {
+    this.data$.pipe(takeUntil(this.destroy$)).subscribe(({ feed }) => {
       if (feed) {
         this.lineChartData = this.dataProcessorSrv.lineChartCars(
           feed,
@@ -97,7 +111,7 @@ export class TabsComponent implements OnInit {
     })
   }
 
-  public openModal() {
+  public openModal(): void {
     this.modalSrv.openModal()
   }
 }

@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core'
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -43,25 +51,31 @@ echarts.use([
     </div>
   `,
 })
-export class PieComponent implements OnInit, OnDestroy {
+export class PieComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() public pieData!: CarTypeInterface
+  @Input() public background!: string
+  @Input() public theme!: string
+
   public chartTitle: string = 'Sales trends of different car models'
   public charTitleFontSize: number = 24
   private myChart: echarts.ECharts | null = null
+  private chartOptions: any
 
-  @Input() public pieData!: CarTypeInterface
-  @Input()
-  public background!: string
-  @Input()
-  public theme!: string
-
-  constructor(
-    private el: ElementRef,
-    private transformSrv: TransformationService,
-    private themeSrv: ThemeManagementService
+  public constructor(
+    private readonly el: ElementRef,
+    private readonly transformSrv: TransformationService,
+    private readonly themeSrv: ThemeManagementService
   ) {}
 
   ngOnInit(): void {
-    this.pieChartInit()
+    this.initializeChart()
+    console.log(this.pieData)
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['theme'] || changes['background'] || changes['pieData']) {
+      this.updateChart()
+    }
   }
 
   ngOnDestroy(): void {
@@ -70,15 +84,18 @@ export class PieComponent implements OnInit, OnDestroy {
     }
   }
 
-  private pieChartInit(): void {
+  private initializeChart(): void {
     const chartDom = this.el.nativeElement.querySelector('#pie-chart')
     this.myChart = echarts.init(chartDom, this.themeSrv.getTheme(this.theme))
+    this.createChartOptions()
+    this.myChart.setOption(this.chartOptions)
+  }
 
-    // Transform carsType data for the chart
+  private createChartOptions(): void {
     const data = this.transformSrv.transformData(this.pieData)
     const chartData = Object.keys(this.pieData)
 
-    const option = {
+    this.chartOptions = {
       tooltip: {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)',
@@ -105,7 +122,12 @@ export class PieComponent implements OnInit, OnDestroy {
         },
       ],
     }
+  }
 
-    this.myChart.setOption(option)
+  private updateChart(): void {
+    if (this.myChart) {
+      this.myChart.dispose()
+    }
+    this.initializeChart()
   }
 }

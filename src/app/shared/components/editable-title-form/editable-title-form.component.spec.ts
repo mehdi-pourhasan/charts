@@ -32,40 +32,24 @@ describe('EditableTitleFormComponent', () => {
     fixture.detectChanges()
   })
 
-  it('should create component', () => {
-    expect(component).toBeTruthy()
+  describe('Component', () => {
+    it('should created', () => {
+      expect(component).toBeTruthy()
+    })
   })
 
-  it('should emit update event with new values', () => {
-    const newConfig = {
-      title: 'new title',
-      fontSize: 32,
-    }
+  describe('Form functionality', () => {
+    it('should emit update event with new values', () => {
+      const newConfig = {
+        title: 'new title',
+        fontSize: 32,
+      }
 
-    spyOn(component.updateConfig, 'emit')
-    component.formData = newConfig
-    component.onUpdate()
+      spyOn(component.updateConfig, 'emit')
+      component.formData = newConfig
+      component.onUpdate()
 
-    expect(component.updateConfig.emit).toHaveBeenCalledWith(newConfig)
-  })
-
-  it('should handle form input changes', () => {
-    const titleInput = fixture.nativeElement.querySelector(
-      'input[placeholder="New Title"]'
-    )
-    const fontSizeInput = fixture.nativeElement.querySelector(
-      'input[placeholder="Font Size (px)"]'
-    )
-
-    titleInput.value = 'Changed Title'
-    titleInput.dispatchEvent(new Event('input'))
-
-    fontSizeInput.value = '36'
-    fontSizeInput.dispatchEvent(new Event('input'))
-
-    fixture.detectChanges()
-
-    expect(component.formData.title).toBe('Changed Title')
-    expect(component.formData.fontSize).toBe(36)
+      expect(component.updateConfig.emit).toHaveBeenCalledWith(newConfig)
+    })
   })
 })

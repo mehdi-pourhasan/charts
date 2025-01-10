@@ -1,81 +1,101 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-
 import { UploadFileComponent } from './upload-file.component'
-import { Store } from '@ngrx/store'
-import { BackendDataService } from '../../services/backend-data/backend-data.service'
-import { Router } from '@angular/router'
+import { of, throwError } from 'rxjs'
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload'
-import { of } from 'rxjs'
 import { uploadActions } from '../../store/upload-file/action'
+import { Store } from '@ngrx/store'
+import { provideMockStore } from '@ngrx/store/testing'
+import { Router } from '@angular/router'
+import { BackendDataService } from '../../services/backend-data/backend-data.service'
 
 describe('UploadFileComponent', () => {
-  // تعریف متغیر ها
-  // نمونه شبیه سازی شده کامپوننت
   let component: UploadFileComponent
-  // برای دسترسی به دام
   let fixture: ComponentFixture<UploadFileComponent>
-  // برای شبیه سازی سرویس های مورد نیاز در کامپوننت
-  let store: jasmine.SpyObj<Store>
-  let backendService: jasmine.SpyObj<BackendDataService>
-  let router: jasmine.SpyObj<Router>
+  let storeSpy: jasmine.SpyObj<Store>
+  let backendSrvSpy: jasmine.SpyObj<BackendDataService>
+  let routerSpy: jasmine.SpyObj<Router>
 
-  beforeEach(async () => {
-    // ایجاد شبیه ساز های مورد نیاز در کامپوننت
-    const storeSpy = jasmine.createSpyObj('Store', ['dispatch'])
-    const backendServiceSpy = jasmine.createSpyObj('BackendDataService', [
-      'upload file',
-    ])
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate'])
+  beforeEach(() => {
+    storeSpy = jasmine.createSpyObj('Store', ['dispatch'])
+    backendSrvSpy = jasmine.createSpyObj('BackendDataService', ['uploadFile'])
+    routerSpy = jasmine.createSpyObj('Router', ['navigate'])
 
-    await TestBed.configureTestingModule({
-      declarations: [UploadFileComponent],
+    TestBed.configureTestingModule({
+      imports: [UploadFileComponent],
       providers: [
+        provideMockStore(),
         { provide: Store, useValue: storeSpy },
-        { provide: BackendDataService, useValue: backendServiceSpy },
+        { provide: BackendDataService, useValue: backendSrvSpy },
         { provide: Router, useValue: routerSpy },
       ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(UploadFileComponent)
     component = fixture.componentInstance
-    // تزریق وابستگی ها
-    store = TestBed.inject(Store) as jasmine.SpyObj<Store>
-    backendService = TestBed.inject(
-      BackendDataService
-    ) as jasmine.SpyObj<BackendDataService>
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>
   })
 
-  it('should create upload file component', () => {
-    expect(component).toBeTruthy()
+  describe('Component', () => {
+    it('should create component', () => {
+      expect(component).toBeTruthy()
+    })
   })
 
-  it('should dispatch action and navigate after successful upload', () => {
-    const Mockfile = new File([''], 'data.csv')
-    const Mockresponse = { success: true }
-    const info: NzUploadChangeParam = {
-      file: {
-        uid: '1',
-        name: 'data.csv',
-        status: 'done',
-        originFileObj: Mockfile,
-      },
-      fileList: [],
-    }
+  describe('service and action', () => {
+    it('should dispatch upload action and call backend service', () => {
+      const file = new File([''], 'data.csv')
+      const info: NzUploadChangeParam = {
+        file: { status: 'done', originFileObj: file },
+      } as NzUploadChangeParam
 
-    backendService.uploadFile.and.returnValue(of(Mockresponse))
-    component.handleChange(info)
+      backendSrvSpy.uploadFile.and.returnValue(of({ success: true }))
 
-    expect(store.dispatch).toHaveBeenCalledWith(
-      uploadActions.upload({ file: Mockfile })
-    )
-    expect(store.dispatch).toHaveBeenCalledWith(
-      uploadActions.uploadSuccess({ response: Mockresponse })
-    )
-    expect(router.navigate).toHaveBeenCalledWith(['/info'])
+      component.handleChange(info)
+
+      // upload action dispatched
+      expect(storeSpy.dispatch).toHaveBeenCalledWith(
+        uploadActions.upload({ file })
+      )
+
+      //  upload success action dispatched
+      expect(storeSpy.dispatch).toHaveBeenCalledWith(
+        uploadActions.uploadSuccess({ response: { success: true } })
+      )
+
+      expect(backendSrvSpy.uploadFile).toHaveBeenCalledWith(file)
+    })
   })
 
-  xit('should log error on upload failure', () => {
-    expect(component).toBeTruthy()
+  describe('success and failure actions', () => {
+    it('should dispatch upload success and navigate after upload was successfully finished', () => {
+      const file = new File([''], 'data.csv')
+      const info: NzUploadChangeParam = {
+        file: { status: 'done', originFileObj: file },
+      } as NzUploadChangeParam
+
+      backendSrvSpy.uploadFile.and.returnValue(of({ success: true }))
+
+      component.handleChange(info)
+
+      expect(storeSpy.dispatch).toHaveBeenCalledWith(
+        uploadActions.uploadSuccess({ response: { success: true } })
+      )
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/info'])
+    })
+
+    it('should log error when upload fails', () => {
+      const consoleSpy = spyOn(console, 'log')
+      const file = new File([''], 'data.csv')
+      const info: NzUploadChangeParam = {
+        file: { status: 'done', originFileObj: file },
+      } as NzUploadChangeParam
+
+      backendSrvSpy.uploadFile.and.returnValue(
+        throwError(() => new Error('upload failed'))
+      )
+
+      component.handleChange(info)
+
+      expect(consoleSpy).toHaveBeenCalledWith('Error uploading file')
+    })
   })
 })

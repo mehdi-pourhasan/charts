@@ -118,7 +118,7 @@ export class ThemeManagementService {
 
   private registeredThemes = new Set<string>()
 
-  constructor() {
+  public constructor() {
     this.registerAllThemes()
   }
 
@@ -134,10 +134,6 @@ export class ThemeManagementService {
   public getTheme(themeName: string = ''): string {
     const normalizedTheme = themeName.toLowerCase()
     return this.registeredThemes.has(normalizedTheme) ? normalizedTheme : ''
-  }
-
-  public isValidTheme(themeName: string): boolean {
-    return this.registeredThemes.has(themeName.toLowerCase())
   }
 
   public getAvailableThemes(): string[] {

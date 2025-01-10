@@ -8,7 +8,7 @@ import { Observable } from 'rxjs'
 export class BackendDataService {
   private baseUrl = 'http://localhost:3000/api'
 
-  constructor(private http: HttpClient) {}
+  public constructor(private readonly http: HttpClient) {}
 
   uploadFile(file: File): Observable<any> {
     const formData = new FormData()

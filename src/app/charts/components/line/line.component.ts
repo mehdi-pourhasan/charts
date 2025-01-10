@@ -1,4 +1,12 @@
-import { Component, OnInit, ElementRef, Input, OnChanges } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core'
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -36,35 +44,52 @@ echarts.use([
       >
         Click to Edit
       </h1>
-      <div id="stacked-chart" style="width: 100%; height: 80rem;"></div>
+      <div
+        id="stacked-chart"
+        [style.background-color]="background"
+        style="width: 100%; height: 80rem;"
+      ></div>
     </div>
   `,
   styles: [``],
 })
-export class LineComponent implements OnInit, OnChanges {
+export class LineComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() public background!: string
+  @Input() public theme!: string
+  @Input() public lineData!: SalesData
+
   public chartTitle: string = 'Number of car sales by chassis type'
   public charTitleFontSize: number = 24
 
-  @Input() public lineData!: SalesData
+  public myChart: echarts.ECharts | null = null
+  private chartOptions: any
 
-  private myChart: echarts.ECharts | null = null
-
-  constructor(private el: ElementRef) {}
+  constructor(private readonly el: ElementRef) {}
 
   ngOnInit(): void {
-    this.initlineChart()
+    this.initChart()
   }
 
-  ngOnChanges(): void {
-    if (this.lineData) {
-      this.initlineChart() // Reinitialize if line data changes
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['theme'] || changes['background'] || changes['lineData']) {
+      this.updateChart()
     }
   }
 
-  private initlineChart(): void {
-    const chartDom = this.el.nativeElement.querySelector('#stacked-chart')
-    this.myChart = echarts.init(chartDom, 'Cool')
+  ngOnDestroy(): void {
+    if (this.myChart) {
+      this.myChart.dispose()
+    }
+  }
 
+  private initChart(): void {
+    const chartDom = this.el.nativeElement.querySelector('#stacked-chart')
+    this.myChart = echarts.init(chartDom, this.theme)
+    this.createChartOptions()
+    this.myChart?.setOption(this.chartOptions)
+  }
+
+  private createChartOptions(): void {
     const dates = Object.keys(this.lineData)
     const bodyStyles = Array.from(
       new Set(
@@ -72,23 +97,19 @@ export class LineComponent implements OnInit, OnChanges {
           Object.keys(styleData)
         )
       )
-    ) // Get unique Body Styles
+    )
 
-    // Prepare series data for each model
-    const series = bodyStyles.map((bodyStyle) => {
-      return {
-        name: bodyStyle,
-        type: 'line',
-        stack: 'Total',
-        emphasis: {
-          focus: 'series',
-        },
-        data: dates.map((date) => this.lineData[date][bodyStyle] ?? 0), // Extract values for each bodyStyle per date
-      }
-    })
+    const series = bodyStyles.map((bodyStyle) => ({
+      name: bodyStyle,
+      type: 'line',
+      stack: 'Total',
+      emphasis: {
+        focus: 'series',
+      },
+      data: dates.map((date) => this.lineData[date][bodyStyle] ?? 0),
+    }))
 
-    // Chart options
-    const option = {
+    this.chartOptions = {
       tooltip: {
         trigger: 'axis',
         backgroundColor: '#fff',
@@ -120,9 +141,12 @@ export class LineComponent implements OnInit, OnChanges {
       },
       series: series,
     }
+  }
 
+  private updateChart(): void {
     if (this.myChart) {
-      this.myChart.setOption(option)
+      this.myChart.dispose()
     }
+    this.initChart()
   }
 }

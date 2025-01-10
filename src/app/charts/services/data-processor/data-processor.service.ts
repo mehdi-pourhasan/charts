@@ -13,11 +13,11 @@ import { quarterlyIncomeInterface } from '../../types/quarterlyincomeData.interf
   providedIn: 'root',
 })
 export class DataProcessorService {
-  constructor(
-    private lineChartSrv: LineChartDataProcessorService,
-    private pieChartSrv: PieChartDataProcessorService,
-    private sunBurstChartSrv: SunBurstChartDataProcessorService,
-    private StackedChartSrv: StackedChartDataProcessorService
+  public constructor(
+    private readonly lineChartSrv: LineChartDataProcessorService,
+    private readonly pieChartSrv: PieChartDataProcessorService,
+    private readonly sunBurstChartSrv: SunBurstChartDataProcessorService,
+    private readonly StackedChartSrv: StackedChartDataProcessorService
   ) {}
 
   public pieChartCars(cars: CarsInterface[]): CarTypeInterface {
